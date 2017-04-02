@@ -16,6 +16,7 @@ int_const	{digit}+
 {int_const}	{ yylval.int_val = atoi(yytext); return INTEGER_LITERAL; }
 "+"		{ yylval.op_val = new std::string(yytext); return PLUS; }
 "*"		{ yylval.op_val = new std::string(yytext); return MULT; }
+"/"		{ yylval.op_val = new std::string(yytext); return DIV; }
 
 [ \t]*		{}
 [\n]		{ yylineno++;	}

@@ -18,6 +18,7 @@ int yylex(void);
 %type	<int_val>	exp
 %left	PLUS
 %left	MULT
+%left	DIV
 
 %%
 
@@ -28,6 +29,7 @@ input:		/* empty */
 exp:		INTEGER_LITERAL	{ $$ = $1; }
 		| exp PLUS exp	{ $$ = $1 + $3; }
 		| exp MULT exp	{ $$ = $1 * $3; }
+		| exp DIV exp	{ $$ = $1 / $3; }
 		;
 
 %%
