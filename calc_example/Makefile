@@ -1,33 +1,40 @@
 # Makefile
 
-OBJS	= bison.o lex.o main.o
+OBJS := bison.o flex.o main.o
 
-CC	= g++
-CFLAGS	= -g -Wall -ansi -pedantic
+PROGRAM := calc
+OUTPUTS := *.o flex.c bison.c lex.yy.c calc.c tok.h calc.output y.tab.c
 
-calc:		$(OBJS)
-		$(CC) $(CFLAGS) $(OBJS) -o calc -lfl
+LEX := flex
+LFLAGS :=
+YACC := bison -y
+YFLAGS := -d
 
-lex.o:		lex.c
-		$(CC) $(CFLAGS) -c lex.c -o lex.o
+CC := g++
+CFLAGS := -g -Wall -ansi -pedantic
 
-lex.c:		calc.lex
-		flex calc.lex
-		cp lex.yy.c lex.c
+$(PROGRAM): $(OBJS)
+	$(CC) $(CFLAGS) $^ -o $@ -lfl
 
-bison.o:	bison.c
-		$(CC) $(CFLAGS) -c bison.c -o bison.o
+bison.o main.o: heading.h
+calc.o main.o: tok.h
 
-bison.c:	calc.y
-		bison -d -v calc.y
-		cp calc.tab.c bison.c
-		cmp -s calc.tab.h tok.h || cp calc.tab.h tok.h
+flex.o: flex.c
 
-main.o:		main.cc
-		$(CC) $(CFLAGS) -c main.cc -o main.o
+flex.c: calc.l tok.h
+	$(LEX) $<
+	mv lex.yy.c $@
 
-lex.o yac.o main.o	: heading.h
-lex.o main.o		: tok.h
+y.tab.c y.tab.h: calc.y
+	$(YACC) $(YFLAGS) calc.y
+
+bison.c: y.tab.c
+	mv $< $@
+
+tok.h: y.tab.h
+	mv $< $@
 
 clean:
-	rm -f *.o *~ lex.c lex.yy.c bison.c tok.h calc.tab.c calc.tab.h calc.output calc
+	$(RM) $(OUTPUTS) $(PROGRAM)
+
+.PHONY: clean
