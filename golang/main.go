@@ -8,19 +8,23 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
+	tokens := tokenizeInput()
+	formatted := formatTokens(tokens)
+	fmt.Print(formatted)
+}
+
+func formatTokens(tokens []string) string {
+	formatted := ""
+
 	NEWLINE_BEFORE := []string{"WHERE", "ORDER"}
 	SPACE_NOT_ON := []string{"."}
 	SPACE_NOT_BEFORE := []string{".", ";"}
 
-	next := ""
-	// prev := ""
-	curr := ""
-	tokens := tokenizeInput()
 	for idx, v := range tokens {
 
 		/// next, prev = updatePrevNext()
 		// update vars
-		next = "" // clear in function ^
+		next := "" // clear in function ^
 		// prev = "" // clear in function ^
 		if idx < len(tokens)-1 {
 			next = tokens[idx+1]
@@ -28,7 +32,7 @@ func main() {
 		// if idx > 0 {
 		// 	prev = tokens[idx-1]
 		// }
-		curr = tokens[idx]
+		curr := tokens[idx]
 
 		/// addSpace()
 		willAddSpace := true
@@ -50,15 +54,17 @@ func main() {
 			willAddNewline = true
 		}
 
-		// print it (character always printed)
-		fmt.Print(v)
+		// print token (token itself is always printed!)
+		formatted += v
 
 		// formatting decisions
 		if willAddSpace {
-			fmt.Print(" ")
+			formatted += " "
 		}
 		if willAddNewline {
-			fmt.Print("\n")
+			formatted += "\n"
 		}
 	}
+
+	return formatted
 }

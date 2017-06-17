@@ -10,3 +10,7 @@ $(PROGRAM) : main.go
 .PHONY : clean
 clean :
 	$(RM) $(PROGRAM)
+
+.PHONY : check
+check :
+	go test
