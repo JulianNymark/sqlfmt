@@ -4,7 +4,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
+	"time"
 )
+
+var StartTime = time.Now()
+var NEWLINE_BEFORE = []string{"WHERE", "ORDER"}
+var NEWLINE_ON = []string{";"}
+var SPACE_NOT_ON = []string{"."}
+var SPACE_NOT_BEFORE = []string{".", ";"}
+var INCREMENT_INDENT_ON = []string{"SAVEPOINT"}
+var DECREMENT_INDENT_BEFORE = []string{"ROLLBACK"}
+
+var INDENTATION_LEVEL = 0
+var INDENTATION_TOKEN = "    "
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -18,9 +31,7 @@ func main() {
 func formatTokens(tokens []string) string {
 	formatted := ""
 
-	NEWLINE_BEFORE := []string{"WHERE", "ORDER"}
-	SPACE_NOT_ON := []string{"."}
-	SPACE_NOT_BEFORE := []string{".", ";"}
+	INDENTATION_LEVEL = 0
 
 	for idx, v := range tokens {
 
@@ -54,9 +65,21 @@ func formatTokens(tokens []string) string {
 		if inside(next, NEWLINE_BEFORE) {
 			willAddNewline = true
 		}
+		if inside(curr, NEWLINE_ON) {
+			willAddNewline = true
+		}
 		// if last token, add newline
 		if idx == len(tokens)-1 {
 			willAddNewline = true
+		}
+
+		// incIndent()
+		if inside(curr, INCREMENT_INDENT_ON) {
+			INDENTATION_LEVEL += 1
+		}
+		// decIndent() TODO... more lookahead
+		if inside(next, DECREMENT_INDENT_BEFORE) {
+			INDENTATION_LEVEL -= 1 // TODO error on < 0?
 		}
 
 		// print token (token itself is always printed!)
@@ -64,8 +87,8 @@ func formatTokens(tokens []string) string {
 
 		// formatting decisions
 		if willAddNewline {
-			formatted += "\n"
-			continue
+			formatted += "\n" + indent() // indent done together with newline
+			willAddSpace = false         // newline always replaces space?
 		}
 		if willAddSpace {
 			formatted += " "
@@ -73,4 +96,8 @@ func formatTokens(tokens []string) string {
 	}
 
 	return formatted
+}
+
+func indent() string {
+	return strings.Repeat(INDENTATION_TOKEN, INDENTATION_LEVEL)
 }

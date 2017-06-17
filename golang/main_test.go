@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -42,6 +43,10 @@ func _TestSample(t *testing.T, infile string, outfile string) {
 
 	tokens := tokenizeInput(input_r)
 	formatted := formatTokens(tokens)
+
+	fmt.Println("############## DEBUG #########")
+	fmt.Println(formatted)
+	fmt.Println("############## DEBUG END #####")
 
 	assert.Equal(string(expected), formatted)
 }
