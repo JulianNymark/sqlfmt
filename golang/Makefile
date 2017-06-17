@@ -13,4 +13,4 @@ clean :
 
 .PHONY : check
 check :
-	go test
+	@go test

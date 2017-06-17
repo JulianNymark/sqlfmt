@@ -3,13 +3,15 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	tokens := tokenizeInput()
+	tokens := tokenizeInput(os.Stdin)
 	formatted := formatTokens(tokens)
+
 	fmt.Print(formatted)
 }
 
@@ -49,8 +51,11 @@ func formatTokens(tokens []string) string {
 
 		/// addNewline()
 		willAddNewline := false
-		// if next is WHERE or, newline
 		if inside(next, NEWLINE_BEFORE) {
+			willAddNewline = true
+		}
+		// if last token, add newline
+		if idx == len(tokens)-1 {
 			willAddNewline = true
 		}
 
@@ -58,11 +63,12 @@ func formatTokens(tokens []string) string {
 		formatted += v
 
 		// formatting decisions
-		if willAddSpace {
-			formatted += " "
-		}
 		if willAddNewline {
 			formatted += "\n"
+			continue
+		}
+		if willAddSpace {
+			formatted += " "
 		}
 	}
 

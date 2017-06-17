@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"io"
 	"text/scanner"
 )
 
@@ -18,11 +18,11 @@ func inside(e string, s []string) bool {
 	return contains(s, e)
 }
 
-func tokenizeInput() []string {
+func tokenizeInput(reader io.Reader) []string {
 	var tokens []string
 
 	var s scanner.Scanner
-	s.Init(os.Stdin)
+	s.Init(reader)
 	var token rune
 	token = s.Scan()
 	for token != scanner.EOF {
